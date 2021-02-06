@@ -13,7 +13,7 @@ public:
     return m_mu*a_s;
   }
   double sigma(double a_s, double a_t)const{
-    return (a_s < 0 ? 0 : m_sigma*a_s);
+    return (a_s < 0 ? 0 :    m_sigma*a_s);
   }
 };
 }
