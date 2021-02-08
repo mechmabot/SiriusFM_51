@@ -16,5 +16,6 @@ namespace SiriusFM{
       r = atof(buff+4);
       m_IRs[int(str2CcyE(buff))] = r;
     }
+    fclose(f);
   }
 }
