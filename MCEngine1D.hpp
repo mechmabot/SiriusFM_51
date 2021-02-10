@@ -55,7 +55,7 @@ namespace SiriusFM{
     double slast = sqrt(tlast);
     assert(slast>=0 && slast <= stau);
     L++;
-    for(long p = 0; p < a_P; ++ p){
+    for(long p = 0; p < a_P; ++p){
       double * path0 = m_paths+2*p*L;
       double * path1 = path0 + L;
       path0[0] = a_S0;
@@ -96,7 +96,5 @@ namespace SiriusFM{
     }
     m_L = L;
     m_P = P;
-
-
   }
 }

@@ -4,7 +4,7 @@
 #include "MCEngine1D.hpp"
 using namespace SiriusFM;
 using namespace std;
-int main(int argc, char * argv[]){ // mu, sigma, S0, T_days, tau_min, P
+int main(int argc, char * argv[]){ // Diffusion: mu, sigma, S0, Option: call/put, T_days, tau_min, P
   if(argc != 7){
     cerr <<"PARAMS: mu, sigma, S0, T_days, tau_min, P\n";
     return 1;
@@ -15,12 +15,6 @@ int main(int argc, char * argv[]){ // mu, sigma, S0, T_days, tau_min, P
   long T_days = atol(argv[4]);
   long tau_min = atol(argv[5]);
   long P = atol(argv[6]);
-  cout << "mu "<< mu <<endl;
-  cout << "sigma "<< sigma <<endl;
-  cout << "S0 "<< S0 <<endl;
-  cout << "T_days "<< T_days <<endl;
-  cout << "tau_min "<< tau_min <<endl;
-  cout << "P "<< P <<endl; 
   //check all params are > 0; if(...) {cerr << "..."; return 2;}
   CcyE ccyA = CcyE::USD;
 
@@ -56,6 +50,7 @@ int main(int argc, char * argv[]){ // mu, sigma, S0, T_days, tau_min, P
     double RT = log(ST/S0);
     EST += RT;
     EST2 += RT*RT;
+    cout << ST << endl;
 
   }
 
@@ -64,7 +59,7 @@ int main(int argc, char * argv[]){ // mu, sigma, S0, T_days, tau_min, P
   double VarST = (EST2 - double(NVP)*EST*EST)/(NVP - 1); // sigma^2 * T
   double sigma2E = VarST/T_years;
   double muE = (EST + VarST/2.0)/T_years;
-  cout << "mu =  "<< mu << " muE = "<< muE << endl;
+  cout << "mu =  " << mu << " muE = " << muE << endl;
   cout << "sigma2 =  "<< sigma*sigma << " sigmaE = "<< sigma2E << endl;
   return 0;
 }
