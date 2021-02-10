@@ -9,7 +9,8 @@ namespace SiriusFM{
     GBP = 2,
     CHR = 3,
     RUB = 4,
-    N = 5
+    ZZZ = 5,
+    N = 6
   };
   inline CcyE str2CcyE(char const * a_str){
     if(strcmp(a_str, "USD") == 0){
