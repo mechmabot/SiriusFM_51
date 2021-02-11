@@ -21,6 +21,7 @@ public:
   MCEngine1D(long a_MaxL, long a_MaxB):
     m_MaxL(a_MaxL), m_MaxP(a_MaxB),
     m_paths(new double[m_MaxL * m_MaxP]),
+    // m_rs = new double[L];
     m_L(0), m_P(0)
   {
       if(m_MaxL <= 0 || m_MaxP <= 0){
@@ -40,7 +41,7 @@ public:
                 time_t a_T,   // Expir. time
                 int a_tau_min,
                 long a_P,
-                double a_S0,
+              //  double a_S0,
                 Diffusion1D const* a_diff,
                 AProvider const * a_rateA,
                 BProvider const * a_rateB,

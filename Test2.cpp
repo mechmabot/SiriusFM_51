@@ -2,24 +2,36 @@
 #include "DiffusionGBM.h"
 #include "IRProviderConst.h"
 #include "MCEngine1D.hpp"
+#include "VanillaOptions.h"
 using namespace SiriusFM;
 using namespace std;
-int main(int argc, char * argv[]){ // Diffusion: mu, sigma, S0, Option: call/put, T_days, tau_min, P
-  if(argc != 7){
+int main(int argc, char * argv[]){ // Diffusion: mu, sigma, S0, Option: call/put, K,  T_days, MCEngine: tau_min, P
+  // S0 - параметр diffusion а не S0 (должен быть);
+  if(argc != 9){
     cerr <<"PARAMS: mu, sigma, S0, T_days, tau_min, P\n";
     return 1;
   }
   double mu = atof(argv[1]);
   double sigma = atof(argv[2]);
   double S0 = atof(argv[3]);
-  long T_days = atol(argv[4]);
-  long tau_min = atol(argv[5]);
-  long P = atol(argv[6]);
+  char const* optionType = argv[4];
+  double K = atof(argv[5]);
+  long T_days = atol(argv[6]);
+  long tau_min = atol(argv[7]);
+  long P = atol(argv[8]);
   //check all params are > 0; if(...) {cerr << "..."; return 2;}
+  Option const * option = nullptr;
+  if (strcmp(optionType, "Call") == 0)
+            option = new EurCallOption(K, T_days);
+  else if(strcmp(optionType, "Put")==0)
+            option = new EurPutOption(K, T_days);
+  else
+    throw invalid_argument("not put & not call");
+
   CcyE ccyA = CcyE::USD;
 
   IRProvider<IRModeE::Const> irp(nullptr);
-  DiffusionGBM Diff(mu, sigma);
+  DiffusionGBM Diff(mu, sigma, S0);
   MCEngine1D<decltype(Diff),
              decltype(irp),
              decltype(irp),
@@ -30,7 +42,7 @@ int main(int argc, char * argv[]){ // Diffusion: mu, sigma, S0, Option: call/put
   time_t T = t0 + T_days*86400;
   double T_years = T_days/365.25;
   // Run MC
-  mce.Simulate<false>(t0, T, tau_min, P, S0, &Diff, &irp, &irp, ccyA, ccyA);
+  mce.Simulate<false>(t0, T, tau_min, P, &Diff, &irp, &irp, ccyA, ccyA);
   // Analize the results
   auto res = mce.GetPaths();
   long L1 = get<0>(res);
@@ -47,19 +59,23 @@ int main(int argc, char * argv[]){ // Diffusion: mu, sigma, S0, Option: call/put
       continue;
     }
     ++NVP;
-    double RT = log(ST/S0);
-    EST += RT;
-    EST2 += RT*RT;
+    double PT = option->payoff(L1, nullptr, path); // payoff
+    EST += PT;
+    EST2 += PT*PT;
 
   }
 
   assert(NVP > 1);
-  EST /= double(NVP);// (mu - sigma^2/2)*T
-  double VarST = (EST2 - double(NVP)*EST*EST)/(NVP - 1); // sigma^2 * T
-  double sigma2E = VarST/T_years;
+  EST /= double(NVP); // + discount factor
+//  double VarST = (EST2 - double(NVP)*EST*EST)/(NVP - 1); // sigma^2 * T
+  cout << EST << endl;
+  /*double sigma2E = VarST/T_years;
   double muE = (EST + VarST/2.0)/T_years;
-  cout << "mu =  " << mu << " muE = " << muE << endl;
-  cout << "sigma2 =  "<< sigma*sigma << " sigmaE = "<< sigma2E << endl;
+  cout << "mu =  "<< mu << " muE = "<< muE << endl;
+  cout << "sigma2 =  "<< sigma*sigma << " sigmaE = "<< sigma2E << endl;*/
+
+
+
   return 0;
 }
 // 0.1 0.25 100 90 5 5000

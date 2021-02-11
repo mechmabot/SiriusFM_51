@@ -20,7 +20,7 @@ namespace SiriusFM{
              time_t a_T,   // Expir. time
              int a_tau_min,
              long a_P,
-             double a_S0,
+          //   double a_S0,
              Diffusion1D const * a_diff,
              AProvider const * a_rateA,
              BProvider const * a_rateB,
@@ -55,14 +55,15 @@ namespace SiriusFM{
     double slast = sqrt(tlast);
     assert(slast>=0 && slast <= stau);
     L++;
+    double S0 = a_diff->S0();
     for(long p = 0; p < a_P; ++p){
       double * path0 = m_paths+2*p*L;
       double * path1 = path0 + L;
-      path0[0] = a_S0;
-      path1[0] = a_S0;
+      path0[0] = S0;
+      path1[0] = S0;
       double y=y0;
-      double Sp0 = a_S0;
-      double Sp1 = a_S0;
+      double Sp0 = S0;
+      double Sp1 = S0;
       for(long l = 1; l < L; ++l){
         // Compute the Trend
         double mu0 = 0.0;
@@ -91,7 +92,7 @@ namespace SiriusFM{
         path0[l] = Sn0;
         path1[l] = Sn1;
         Sp0 = Sn0;
-        Sn1 = Sn1;
+        Sp1 = Sn1;
       }
     }
     m_L = L;
