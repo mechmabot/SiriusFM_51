@@ -1,21 +1,26 @@
 #pragma once
-namespace SiriusFM{
-class DiffusionOU{
-private:
-  double const m_sigma;
-  double const m_kappa;
-  double const m_theta;
+#include<cmath>
 
-public:
-  DiffusionOU(double a_kappa,double a_theta, double a_sigma):m_kappa(a_kappa),m_theta(a_theta),m_sigma(a_sigma){
-    if(m_sigma <= 0) throw std::invalid_argument("invalid sigma");
-    if(m_kappa <= 0) throw std::invalid_argument("invalid kappa");
-  }
-  double mu(double a_s, double a_t)const{
-    return m_kappa*(m_theta-a_s);
-  }
-  double ssigma(double a_s, double a_t)const{
-    return (a_s < 0 ? 0 : m_sigma*a_s);
-  }
-};
+namespace SiriusFM
+{
+                
+	class DiffusionOU
+	{
+		double const m_theta;
+		double const m_kappa;
+		double const m_sigma;
+
+	public:
+		DiffusionOU(double m, double s, double t): 	m_theta(m),
+													m_kappa(s), 
+													m_sigma(t)
+		{
+			if(m_sigma <= 0)
+			{
+			}
+		};
+
+		double mu(double S_t, double t) {return m_kappa*(m_theta -  S_t);};
+		double sigma(double S_t = 0, double t) {return m_sigma;};
+	};
 }

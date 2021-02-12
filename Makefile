@@ -1,17 +1,21 @@
-TARGET = ../run
+#If some problems with Makefile are occured, consider running with
+#g++ -Wall -g -std=c++17 Test2.cpp IRProvider.cpp -o a && ./a [args]
 
-SOURCES = main IRProviderConst
+TARGET  = ../Test2
+
+SOURCES = Test2 IRProviderConst 
 
 EXTLIBS =
 
 CXXFLAGS += -MP -MMD -fPIC
-CXXFLAGS += -std=c++17
-CXXFLAGS += -O -g
+CXXFLAGS += -std=c++17 -Wall
+CXXFLAGS += -O3 -DNDEBUG -march=native -mtune=native
 
-LDFLAGS += -fPIC
-LDFLAGS += -pthread
-LDFLAGS += -Wl,--as-needed
-LDFLAGS += -Wl,--no-undefined
+#LDFLAGS += -v
+#LDFLAGS += -fPIC
+#LDFLAGS += -pthread
+#LDFLAGS += -Wl,--as-needed
+#LDFLAGS += -Wl,--no-undefined
 
 
 BUILD_DIR = $(shell pwd)
@@ -32,10 +36,7 @@ $(OBJECTS_DIR)/%.o: %.c
 	$(CC) $(CFLAGS) -o $@ -c $(realpath $<)
 
 $(TARGET) : $(OBJECTS_DIR) $(OBJECTS)
-	$(CXX) $(LDFLAGS) -o $(TARGET) $(OBJECTS) #'-Wl,-(' $(EXTLIBS)
-
-
-
+	$(CXX) $(LDFLAGS) -o $(TARGET) $(OBJECTS) # '-Wl,-(' $(EXTLIBS)
 
 clean:
 	$(shell rm -fr $(OBJECTS_DIR))
